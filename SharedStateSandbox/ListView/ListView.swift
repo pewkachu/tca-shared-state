@@ -35,15 +35,25 @@ struct ListView: View {
 
     var body: some View {
         List {
-            Toggle(isOn: viewStore.binding(get: \.showFavoredOnly, send: { _ in .toggleFaveView }), label: {
-                Text("Show faves only:")
-            })
+            HStack(spacing: 20) {
+                Button("Push") {
+                    viewStore.send(.navigate)
+                }
+                .buttonStyle(.plain)
+
+                Toggle(isOn: viewStore.binding(get: \.showFavoredOnly, send: { _ in .toggleFaveView }), label: {
+                    Text("Show faves only:")
+                })
+            }
             ForEach(viewStore.items) { item in
                 ItemView(item: item, isFavorited: viewStore.favoriteItems.contains(item.id)) {
                     viewStore.send(.toggleFavorite(id: item.id))
                 }
             }
             .listStyle(.plain)
+        }
+        .sheet(store: store.scope(state: \.$child, action: \.child)) { store in
+            ListView(store: store)
         }
     }
 }

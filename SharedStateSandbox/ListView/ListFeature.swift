@@ -13,16 +13,23 @@ struct ListFeature {
     struct State {
         var items: IdentifiedArrayOf<ItemModel>
         @Shared(.favoriteItemsStored) var favoriteStorage
+        @PresentationState var child: ListFeature.State?
     }
 
     enum Action {
+        case navigate
         case toggleFavorite(id: ItemModel.ID)
         case toggleFaveView
+        case child(PresentationAction<ListFeature.Action>)
     }
 
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .navigate:
+                state.child = .init(items: state.items)
+                return .none
+                
             case let .toggleFavorite(id: id):
                 if state.favoriteStorage.faves.contains(id) {
                     state.favoriteStorage.faves.remove(id)
@@ -34,7 +41,13 @@ struct ListFeature {
             case .toggleFaveView:
                 state.favoriteStorage.filterByFaves.toggle()
                 return .none
+
+            case .child:
+                return .none
             }
+        }
+        .ifLet(\.$child, action: \.child) {
+            ListFeature()
         }
     }
 }
