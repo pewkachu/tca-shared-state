@@ -16,7 +16,6 @@ struct ListFeature {
         var faves: Set<ItemModel.ID> = []
         var filterByFaves: Bool = false
 
-        @Shared(.favoriteItemsStored) fileprivate var favoriteStorage
         @PresentationState var child: ListFeature.State?
 
         mutating func syncSharedState(from state: FavoritesStore) {
@@ -34,13 +33,15 @@ struct ListFeature {
         case favoritesChanged(FavoritesStore)
     }
 
+    @Shared(.favoriteItemsStored) private var favoriteStorage
+
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                state.syncSharedState(from: state.favoriteStorage)
+                state.syncSharedState(from: favoriteStorage)
                 return .publisher {
-                    state.$favoriteStorage.publisher
+                    $favoriteStorage.publisher
                           .map(Action.favoritesChanged)
                 }
             case .navigate:
@@ -48,11 +49,11 @@ struct ListFeature {
                 return .none
                 
             case let .toggleFavorite(id: id):
-                state.favoriteStorage.toggle(fave: id)
+                favoriteStorage.toggle(fave: id)
                 return .none
 
             case .toggleFaveView:
-                state.favoriteStorage.filterByFaves.toggle()
+                favoriteStorage.filterByFaves.toggle()
                 return .none
 
             case .child:

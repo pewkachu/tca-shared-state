@@ -15,12 +15,12 @@ struct FavesList {
 
         var faves: Set<ItemModel.ID> = []
 
-        @Shared(.favoriteItemsStored) fileprivate var favoriteStorage
-
         mutating func syncSharedState(from state: FavoritesStore) {
             faves = state.faves
         }
     }
+
+    @Shared(.favoriteItemsStored) private var favoriteStorage
 
     enum Action {
         case onAppear
@@ -31,9 +31,9 @@ struct FavesList {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                state.syncSharedState(from: state.favoriteStorage)
+                state.syncSharedState(from: favoriteStorage)
                 return .publisher {
-                    state.$favoriteStorage.publisher
+                    $favoriteStorage.publisher
                           .map(Action.favoritesChanged)
                 }
             case .favoritesChanged(let store):
