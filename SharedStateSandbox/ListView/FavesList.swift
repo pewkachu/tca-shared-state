@@ -32,10 +32,15 @@ struct FavesList {
             switch action {
             case .onAppear:
                 state.syncSharedState(from: favoriteStorage)
-                return .publisher {
-                    $favoriteStorage.publisher
-                          .map(Action.favoritesChanged)
+                return .run { send in
+                    for await state in $favoriteStorage.publisher.values {
+                        await send(.favoritesChanged(state))
+                    }
                 }
+//                return .publisher {
+//                    $favoriteStorage.publisher
+//                          .map(Action.favoritesChanged)
+//                }
             case .favoritesChanged(let store):
                 state.syncSharedState(from: store)
                 return .none

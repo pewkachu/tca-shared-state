@@ -39,11 +39,17 @@ struct ListFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                state.syncSharedState(from: favoriteStorage)
-                return .publisher {
-                    $favoriteStorage.publisher
-                          .map(Action.favoritesChanged)
-                }
+//                state.syncSharedState(from: favoriteStorage)
+                return .syncSharedState($favoriteStorage, action: Action.favoritesChanged)
+//                return .run { send in
+//                    for await state in $favoriteStorage.publisher.values {
+//                        await send(.favoritesChanged(state))
+//                    }
+//                }
+//                return .publisher {
+//                    $favoriteStorage.publisher
+//                          .map(Action.favoritesChanged)
+//                }
             case .navigate:
                 state.child = .init(items: state.items)
                 return .none
@@ -66,6 +72,17 @@ struct ListFeature {
         }
         .ifLet(\.$child, action: \.child) {
             ListFeature()
+        }
+    }
+}
+
+extension Effect {
+    public static func syncSharedState<Value>(_ state: Shared<Value>, action: @escaping (Value) -> Action) -> Effect<Action> {
+        .run { send in
+            await send(action(state.wrappedValue))
+            for await state in state.publisher.values {
+                await send(action(state))
+            }
         }
     }
 }
