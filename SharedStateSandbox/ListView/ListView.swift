@@ -15,13 +15,13 @@ struct ListView: View {
         let showFavoredOnly: Bool
 
         init(state: ListFeature.State) {
-            self.items = if state.favoriteStorage.filterByFaves {
-                state.items.filter { state.favoriteStorage.faves.contains($0.id) }
+            self.items = if state.filterByFaves {
+                state.items.filter { state.faves.contains($0.id) }
             } else {
                 state.items
             }
-            self.favoriteItems = state.favoriteStorage.faves
-            self.showFavoredOnly = state.favoriteStorage.filterByFaves
+            self.favoriteItems = state.faves
+            self.showFavoredOnly = state.filterByFaves
         }
     }
 
@@ -54,6 +54,9 @@ struct ListView: View {
         }
         .sheet(store: store.scope(state: \.$child, action: \.child)) { store in
             ListView(store: store)
+        }
+        .onAppear {
+            viewStore.send(.onAppear)
         }
     }
 }

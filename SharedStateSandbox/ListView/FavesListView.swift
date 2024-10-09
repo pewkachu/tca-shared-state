@@ -13,7 +13,7 @@ struct FavesListView: View {
         let items: IdentifiedArrayOf<ItemModel>
 
         init(state: FavesList.State) {
-            self.items = state.items.filter { state.favoriteStorage.faves.contains($0.id) }
+            self.items = state.items.filter { state.faves.contains($0.id) }
         }
     }
 
@@ -31,6 +31,9 @@ struct FavesListView: View {
                 ItemView(item: item, isFavorited: true, toggleFaves: nil)
             }
             .listStyle(.plain)
+        }
+        .onAppear {
+            viewStore.send(.onAppear)
         }
     }
 }

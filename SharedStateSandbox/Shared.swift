@@ -41,4 +41,3 @@ extension PersistenceReaderKey where Self == PersistenceKeyDefault<FileStorageKe
         PersistenceKeyDefault(.fileStorage(.favesStorage), .init(filterByFaves: false, faves: []))
     }
 }
-
