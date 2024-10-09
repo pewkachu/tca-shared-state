@@ -12,6 +12,14 @@ struct FavoritesStore: Codable {
     var filterByFaves: Bool
     var faves: Set<ItemModel.ID>
 
+    mutating func toggle(fave: ItemModel.ID) {
+        if faves.contains(fave) {
+            faves.remove(fave)
+        } else {
+            faves.insert(fave)
+        }
+    }
+
     init(filterByFaves: Bool, faves: Set<ItemModel.ID>) {
         self.filterByFaves = filterByFaves
         self.faves = faves

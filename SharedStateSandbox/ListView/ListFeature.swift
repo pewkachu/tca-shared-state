@@ -31,11 +31,7 @@ struct ListFeature {
                 return .none
                 
             case let .toggleFavorite(id: id):
-                if state.favoriteStorage.faves.contains(id) {
-                    state.favoriteStorage.faves.remove(id)
-                } else {
-                    state.favoriteStorage.faves.insert(id)
-                }
+                state.favoriteStorage.toggle(fave: id)
                 return .none
 
             case .toggleFaveView:

@@ -17,6 +17,21 @@ struct SharedStateSandboxApp: App {
     let store2 = Store(initialState: ListFeature.State(items: .init(uniqueElements: ItemModel.mocks)), reducer: {
         ListFeature()
     })
+
+    init() {
+        Task {
+            @Shared(.favoriteItemsStored) var favoriteStorage
+
+            while (true) {
+                $favoriteStorage.withLock {
+                    $0.toggle(fave: ItemModel.mocks[0].id)
+                }
+                print("toggled")
+                try? await Task.sleep(for: .seconds(5))
+            }
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
             TabView {
