@@ -20,10 +20,10 @@ struct SharedStateSandboxApp: App {
 
     init() {
         Task {
-            @Shared(.favoriteItemsStored) var favoriteStorage
+            @Shared(.favoriteItemsStorage) var favoriteItemsStorage
 
             while (true) {
-                $favoriteStorage.withLock {
+                $favoriteItemsStorage.withLock {
                     $0.toggle(fave: ItemModel.mocks[0].id)
                 }
                 print("toggled")

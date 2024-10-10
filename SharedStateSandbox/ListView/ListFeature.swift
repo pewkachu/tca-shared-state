@@ -18,8 +18,11 @@ struct ListFeature {
 
         @PresentationState var child: ListFeature.State?
 
-        mutating func syncSharedState(from state: FavoritesStore) {
+        mutating func syncFavoritesState(from state: FavoritesStorage<ItemModel.ID>) {
             faves = state.faves
+        }
+
+        mutating func syncSharedState(from state: SharedStore) {
             filterByFaves = state.filterByFaves
         }
     }
@@ -30,17 +33,22 @@ struct ListFeature {
         case toggleFavorite(id: ItemModel.ID)
         case toggleFaveView
         case child(PresentationAction<ListFeature.Action>)
-        case favoritesChanged(FavoritesStore)
+        case favoritesChanged(FavoritesStorage<ItemModel.ID>)
+        case sharedChanged(SharedStore)
     }
 
-    @Shared(.favoriteItemsStored) private var favoriteStorage
+    @Shared(.sharedStorage) private var sharedStorage
+    @Shared(.favoriteItemsStorage) private var favoriteItemsStorage
 
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .onAppear:
+                return .merge(
+                    .syncSharedState($favoriteItemsStorage, action: Action.favoritesChanged),
+                    .syncSharedState($sharedStorage, action: Action.sharedChanged)
+                )
 //                state.syncSharedState(from: favoriteStorage)
-                return .syncSharedState($favoriteStorage, action: Action.favoritesChanged)
 //                return .run { send in
 //                    for await state in $favoriteStorage.publisher.values {
 //                        await send(.favoritesChanged(state))
@@ -55,17 +63,21 @@ struct ListFeature {
                 return .none
                 
             case let .toggleFavorite(id: id):
-                favoriteStorage.toggle(fave: id)
+                favoriteItemsStorage.toggle(fave: id)
                 return .none
 
             case .toggleFaveView:
-                favoriteStorage.filterByFaves.toggle()
+                sharedStorage.filterByFaves.toggle()
                 return .none
 
             case .child:
                 return .none
 
             case .favoritesChanged(let store):
+                state.syncFavoritesState(from: store)
+                return .none
+
+            case .sharedChanged(let store):
                 state.syncSharedState(from: store)
                 return .none
             }
