@@ -61,6 +61,7 @@ struct ListFeature {
             switch action {
             case .onAppear:
                 return .send(.subscribeShared)
+
             case .navigate:
                 state.child = .init(items: state.items)
                 return .none
@@ -76,6 +77,7 @@ struct ListFeature {
             case .child:
                 return .none
 
+            // MARK: - Shared Actions
             case .favoritesChanged(let store):
                 state.syncFavoritesState(from: store)
                 return .none
