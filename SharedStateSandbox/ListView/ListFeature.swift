@@ -10,7 +10,7 @@ import Foundation
 
 @Reducer
 struct ListFeature {
-    struct State {
+    struct State: Equatable {
         var items: IdentifiedArrayOf<ItemModel>
         
         var faves: Set<ItemModel.ID> = []
@@ -27,7 +27,7 @@ struct ListFeature {
         }
     }
 
-    enum Action {
+    enum Action: Equatable {
         case onAppear
         case navigate
         case toggleFavorite(id: ItemModel.ID)
@@ -35,29 +35,30 @@ struct ListFeature {
         case child(PresentationAction<ListFeature.Action>)
         case favoritesChanged(FavoritesStorage<ItemModel.ID>)
         case sharedChanged(SharedStore)
+        case subscribeShared
+        case cancelSharedSubscriptions
     }
 
-    @Shared(.sharedStorage) private var sharedStorage
-    @Shared(.favoriteItemsStorage) private var favoriteItemsStorage
+    @Shared private var sharedStorage: SharedStore
+    @Shared private var favoriteItemsStorage: FavoritesStorage<ItemModel.ID>
+
+    init(
+        sharedStorage: Shared<SharedStore> = Shared(wrappedValue: SharedStore(filterByFaves: false), .sharedStorage),
+        favoriteItemsStorage: Shared<FavoritesStorage<ItemModel.ID>> = Shared(wrappedValue: FavoritesStorage(faves: []), .favoriteItemsStorage)
+    ) {
+        self._sharedStorage = sharedStorage
+        self._favoriteItemsStorage = favoriteItemsStorage
+    }
+
+    enum CancellationID {
+        case subscriptions
+    }
 
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                return .merge(
-                    .syncSharedState($favoriteItemsStorage, action: Action.favoritesChanged),
-                    .syncSharedState($sharedStorage, action: Action.sharedChanged)
-                )
-//                state.syncSharedState(from: favoriteStorage)
-//                return .run { send in
-//                    for await state in $favoriteStorage.publisher.values {
-//                        await send(.favoritesChanged(state))
-//                    }
-//                }
-//                return .publisher {
-//                    $favoriteStorage.publisher
-//                          .map(Action.favoritesChanged)
-//                }
+                return .send(.subscribeShared)
             case .navigate:
                 state.child = .init(items: state.items)
                 return .none
@@ -80,6 +81,15 @@ struct ListFeature {
             case .sharedChanged(let store):
                 state.syncSharedState(from: store)
                 return .none
+
+            case .subscribeShared:
+                return .merge(
+                    .syncSharedState($favoriteItemsStorage, action: Action.favoritesChanged),
+                    .syncSharedState($sharedStorage, action: Action.sharedChanged)
+                )
+                .cancellable(id: CancellationID.subscriptions)
+            case .cancelSharedSubscriptions:
+                return .cancel(id: CancellationID.subscriptions)
             }
         }
         .ifLet(\.$child, action: \.child) {

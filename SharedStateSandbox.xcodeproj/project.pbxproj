@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E136296E2CBD35DB00ABF456 /* SharedStateSandboxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136296D2CBD35DB00ABF456 /* SharedStateSandboxTests.swift */; };
 		E16533E42CB571B0002798F1 /* SharedStateSandboxApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16533E32CB571B0002798F1 /* SharedStateSandboxApp.swift */; };
 		E16533E62CB571B0002798F1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16533E52CB571B0002798F1 /* ContentView.swift */; };
 		E16533E82CB571B0002798F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E16533E72CB571B0002798F1 /* Assets.xcassets */; };
@@ -20,7 +21,19 @@
 		E16534002CB58543002798F1 /* FavesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16533FF2CB58543002798F1 /* FavesListView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		E136296F2CBD35DB00ABF456 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E16533D82CB571B0002798F1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E16533DF2CB571B0002798F1;
+			remoteInfo = SharedStateSandbox;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		E136296B2CBD35DB00ABF456 /* SharedStateSandboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SharedStateSandboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E136296D2CBD35DB00ABF456 /* SharedStateSandboxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStateSandboxTests.swift; sourceTree = "<group>"; };
 		E16533E02CB571B0002798F1 /* SharedStateSandbox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharedStateSandbox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E16533E32CB571B0002798F1 /* SharedStateSandboxApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStateSandboxApp.swift; sourceTree = "<group>"; };
 		E16533E52CB571B0002798F1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -35,6 +48,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		E13629682CBD35DB00ABF456 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E16533DD2CB571B0002798F1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -46,10 +66,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E136296C2CBD35DB00ABF456 /* SharedStateSandboxTests */ = {
+			isa = PBXGroup;
+			children = (
+				E136296D2CBD35DB00ABF456 /* SharedStateSandboxTests.swift */,
+			);
+			path = SharedStateSandboxTests;
+			sourceTree = "<group>";
+		};
 		E16533D72CB571B0002798F1 = {
 			isa = PBXGroup;
 			children = (
 				E16533E22CB571B0002798F1 /* SharedStateSandbox */,
+				E136296C2CBD35DB00ABF456 /* SharedStateSandboxTests */,
 				E16533E12CB571B0002798F1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -58,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				E16533E02CB571B0002798F1 /* SharedStateSandbox.app */,
+				E136296B2CBD35DB00ABF456 /* SharedStateSandboxTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -98,6 +128,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		E136296A2CBD35DB00ABF456 /* SharedStateSandboxTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E13629732CBD35DB00ABF456 /* Build configuration list for PBXNativeTarget "SharedStateSandboxTests" */;
+			buildPhases = (
+				E13629672CBD35DB00ABF456 /* Sources */,
+				E13629682CBD35DB00ABF456 /* Frameworks */,
+				E13629692CBD35DB00ABF456 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E13629702CBD35DB00ABF456 /* PBXTargetDependency */,
+			);
+			name = SharedStateSandboxTests;
+			productName = SharedStateSandboxTests;
+			productReference = E136296B2CBD35DB00ABF456 /* SharedStateSandboxTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		E16533DF2CB571B0002798F1 /* SharedStateSandbox */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E16533EE2CB571B0002798F1 /* Build configuration list for PBXNativeTarget "SharedStateSandbox" */;
@@ -128,6 +176,10 @@
 				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1540;
 				TargetAttributes = {
+					E136296A2CBD35DB00ABF456 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = E16533DF2CB571B0002798F1;
+					};
 					E16533DF2CB571B0002798F1 = {
 						CreatedOnToolsVersion = 15.4;
 					};
@@ -150,11 +202,19 @@
 			projectRoot = "";
 			targets = (
 				E16533DF2CB571B0002798F1 /* SharedStateSandbox */,
+				E136296A2CBD35DB00ABF456 /* SharedStateSandboxTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		E13629692CBD35DB00ABF456 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E16533DE2CB571B0002798F1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -167,6 +227,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		E13629672CBD35DB00ABF456 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E136296E2CBD35DB00ABF456 /* SharedStateSandboxTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E16533DC2CB571B0002798F1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -184,7 +252,51 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		E13629702CBD35DB00ABF456 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E16533DF2CB571B0002798F1 /* SharedStateSandbox */;
+			targetProxy = E136296F2CBD35DB00ABF456 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		E13629712CBD35DB00ABF456 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.antonyuk.SharedStateSandboxTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SharedStateSandbox.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SharedStateSandbox";
+			};
+			name = Debug;
+		};
+		E13629722CBD35DB00ABF456 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.antonyuk.SharedStateSandboxTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SharedStateSandbox.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SharedStateSandbox";
+			};
+			name = Release;
+		};
 		E16533EC2CB571B0002798F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -365,6 +477,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E13629732CBD35DB00ABF456 /* Build configuration list for PBXNativeTarget "SharedStateSandboxTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E13629712CBD35DB00ABF456 /* Debug */,
+				E13629722CBD35DB00ABF456 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E16533DB2CB571B0002798F1 /* Build configuration list for PBXProject "SharedStateSandbox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

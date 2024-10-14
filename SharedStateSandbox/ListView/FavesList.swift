@@ -20,7 +20,11 @@ struct FavesList {
         }
     }
 
-    @Shared(.favoriteItemsStorage) private var favoriteItemsStorage
+    @Shared private var favoriteItemsStorage: FavoritesStorage<ItemModel.ID>
+
+    init(favoriteItemsStorage: Shared<FavoritesStorage<ItemModel.ID>> = Shared(wrappedValue: FavoritesStorage(faves: []), .favoriteItemsStorage)) {
+        self._favoriteItemsStorage = favoriteItemsStorage
+    }
 
     enum Action {
         case onAppear
@@ -32,16 +36,6 @@ struct FavesList {
             switch action {
             case .onAppear:
                 return .syncSharedState($favoriteItemsStorage, action: Action.favoritesChanged)
-//                state.syncSharedState(from: favoriteStorage)
-//                return .run { send in
-//                    for await state in $favoriteStorage.publisher.values {
-//                        await send(.favoritesChanged(state))
-//                    }
-//                }
-//                return .publisher {
-//                    $favoriteStorage.publisher
-//                          .map(Action.favoritesChanged)
-//                }
             case .favoritesChanged(let store):
                 state.syncSharedState(from: store)
                 return .none

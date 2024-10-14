@@ -18,7 +18,7 @@ extension PersistenceReaderKey where Self == PersistenceKeyDefault<FileStorageKe
     }
 }
 
-struct SharedStore: Codable {
+struct SharedStore: Codable, Equatable {
     var filterByFaves: Bool
 
     init(filterByFaves: Bool) {
@@ -58,3 +58,5 @@ struct FavoritesStorage<IDType: Hashable & Codable>: Codable {
         self.faves = faves
     }
 }
+
+extension FavoritesStorage: Equatable where IDType: Equatable {}
