@@ -33,6 +33,8 @@ struct ListFeature {
         case toggleFavorite(id: ItemModel.ID)
         case toggleFaveView
         case child(PresentationAction<ListFeature.Action>)
+
+        // MARK: - Shared
         case favoritesChanged(FavoritesStorage<ItemModel.ID>)
         case sharedChanged(SharedStore)
         case subscribeShared
