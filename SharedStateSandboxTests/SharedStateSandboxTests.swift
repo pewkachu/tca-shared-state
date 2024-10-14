@@ -16,15 +16,18 @@ final class SharedStateSandboxTests: XCTestCase {
         let faves = Shared(FavoritesStorage<ItemModel.ID>(faves: []))
         let store = await TestStore(initialState: ListFeature.State(items: .init()), reducer: { ListFeature(sharedStorage: filter, favoriteItemsStorage: faves) })
 
+        // sub
         await store.send(.subscribeShared)
         await store.receive(\.favoritesChanged, faves.wrappedValue)
         await store.receive(\.sharedChanged, filter.wrappedValue)
 
+        // actions
         await store.send(.toggleFaveView)
         await store.receive(\.sharedChanged, filter.wrappedValue) {
             $0.filterByFaves = true
         }
 
+        // unsub
         await store.send(.cancelSharedSubscriptions)
     }
 }
