@@ -35,10 +35,10 @@ struct ListFeature {
         case child(PresentationAction<ListFeature.Action>)
 
         // MARK: - Shared
-        case favoritesChanged(FavoritesStorage<ItemModel.ID>)
-        case sharedChanged(SharedStore)
-        case subscribeShared
-        case cancelSharedSubscriptions
+        case sharedSub
+        case sharedUnsub
+        case sharedUpdateFaves(FavoritesStorage<ItemModel.ID>)
+        case sharedUpdateSharedStore(SharedStore)
     }
 
     @Shared private var sharedStorage: SharedStore
@@ -60,7 +60,7 @@ struct ListFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                return .send(.subscribeShared)
+                return .send(.sharedSub)
 
             case .navigate:
                 state.child = .init(items: state.items)
@@ -78,21 +78,22 @@ struct ListFeature {
                 return .none
 
             // MARK: - Shared Actions
-            case .favoritesChanged(let store):
+            case .sharedUpdateFaves(let store):
                 state.syncFavoritesState(from: store)
                 return .none
 
-            case .sharedChanged(let store):
+            case .sharedUpdateSharedStore(let store):
                 state.syncSharedState(from: store)
                 return .none
 
-            case .subscribeShared:
+            case .sharedSub:
                 return .merge(
-                    .syncSharedState($favoriteItemsStorage, action: Action.favoritesChanged),
-                    .syncSharedState($sharedStorage, action: Action.sharedChanged)
+                    .syncSharedState($favoriteItemsStorage, action: Action.sharedUpdateFaves),
+                    .syncSharedState($sharedStorage, action: Action.sharedUpdateSharedStore)
                 )
                 .cancellable(id: CancellationID.subscriptions)
-            case .cancelSharedSubscriptions:
+
+            case .sharedUnsub:
                 return .cancel(id: CancellationID.subscriptions)
             }
         }
