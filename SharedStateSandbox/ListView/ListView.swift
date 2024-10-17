@@ -13,15 +13,17 @@ struct ListView: View {
         let items: IdentifiedArrayOf<ItemModel>
         let favoriteItems: Set<ItemModel.ID>
         let showFavoredOnly: Bool
+//        let sharedID: UUID
 
         init(state: ListFeature.State) {
-            self.items = if state.filterByFaves {
-                state.items.filter { state.faves.contains($0.id) }
+            self.items = if state.sharedStorage.filterByFaves {
+                state.items.filter { state.favoriteItemsStorage.faves.contains($0.id) }
             } else {
                 state.items
             }
-            self.favoriteItems = state.faves
-            self.showFavoredOnly = state.filterByFaves
+            self.favoriteItems = state.favoriteItemsStorage.faves
+            self.showFavoredOnly = state.sharedStorage.filterByFaves
+//            self.sharedID = state.sharedID
         }
     }
 
@@ -52,6 +54,7 @@ struct ListView: View {
             }
             .listStyle(.plain)
         }
+//        .id(viewStore.sharedID)
         .sheet(store: store.scope(state: \.$child, action: \.child)) { store in
             ListView(store: store)
         }
@@ -61,34 +64,8 @@ struct ListView: View {
     }
 }
 
-struct ItemView: View {
-    let item: ItemModel
-    let isFavorited: Bool
-    var toggleFaves: (() ->  Void)?
-
-    var body: some View {
-        Text(item.title)
-            .frame(height: 100)
-            .frame(maxWidth: .infinity)
-            .background {
-                Rectangle()
-                    .fill(item.color)
-            }
-            .overlay(alignment: .topTrailing) {
-                if let toggleFaves {
-                    Button(action: {
-                        toggleFaves()
-                    }, label: {
-                        Image(systemName: isFavorited ? "checkmark.square" : "square")
-                    })
-                    .tint(Color.white)
-                }
-            }
-    }
-}
-
 #Preview {
-    ListView(store: Store(initialState: ListFeature.State(items: .init(uniqueElements: ItemModel.mocks)), reducer: {
+    ListView(store: Store(initialState: ListFeature.State(items: .init(uniqueElements: ItemModel.mocks), sharedStorage: .init(filterByFaves: false), favoriteItemsStorage: .init(faves: [])), reducer: {
         ListFeature()
     }))
 }

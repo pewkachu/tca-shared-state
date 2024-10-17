@@ -13,31 +13,47 @@ struct FavesList {
     struct State {
         var items: IdentifiedArrayOf<ItemModel>
 
-        var faves: Set<ItemModel.ID> = []
+        var sharedID: UUID
+        @Shared var favoriteItemsStorage: FavoritesStorage<ItemModel.ID>
 
-        mutating func syncSharedState(from state: FavoritesStorage<ItemModel.ID>) {
-            faves = state.faves
+        mutating func sharedUpdated() {
+            @Dependency(\.uuid) var uuid
+            self.sharedID = uuid()
+            print("FavesList.sharedUpdated", self.sharedID)
+        }
+
+        init(items: IdentifiedArrayOf<ItemModel>, favoriteItemsStorage: FavoritesStorage<ItemModel.ID> = .init(faves: [])) {
+            self.items = items
+            @Dependency(\.uuid) var uuid
+            self.sharedID = uuid()
+            self._favoriteItemsStorage = Shared(wrappedValue: favoriteItemsStorage, .favoriteItemsStorage)
         }
     }
 
-    @Shared private var favoriteItemsStorage: FavoritesStorage<ItemModel.ID>
-
-    init(favoriteItemsStorage: Shared<FavoritesStorage<ItemModel.ID>> = Shared(wrappedValue: FavoritesStorage(faves: []), .favoriteItemsStorage)) {
-        self._favoriteItemsStorage = favoriteItemsStorage
+    enum CancelID {
+        case sharedSub
     }
 
     enum Action {
         case onAppear
-        case favoritesChanged(FavoritesStorage<ItemModel.ID>)
+        case sharedChanged
     }
 
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                return .syncSharedState($favoriteItemsStorage, action: Action.favoritesChanged)
-            case .favoritesChanged(let store):
-                state.syncSharedState(from: store)
+                if #available(iOS 17.0, *) {
+                    return .none
+                } else {
+                    print("SUBSCRIBED")
+                    return .syncSharedState(state.$favoriteItemsStorage, action: { Action.sharedChanged })
+                        .cancellable(id: CancelID.sharedSub, cancelInFlight: true)
+                }
+//                return .syncSharedState(state.$favoriteItemsStorage, cancellationID: CancelID.sharedSub, action: { Action.sharedChanged })
+
+            case .sharedChanged:
+                state.sharedUpdated()
                 return .none
             }
         }

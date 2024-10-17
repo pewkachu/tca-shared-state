@@ -10,24 +10,25 @@ import SwiftUI
 
 @main
 struct SharedStateSandboxApp: App {
-    let store1 = Store(initialState: ListFeature.State(items: .init(uniqueElements: ItemModel.mocks)), reducer: {
+    let store1 = Store(initialState: ListFeature.State(items: .init(uniqueElements: ItemModel.mocks), sharedStorage: .init(filterByFaves: false), favoriteItemsStorage: .init(faves: [])), reducer: {
         ListFeature()
     })
 
-    let store2 = Store(initialState: ListFeature.State(items: .init(uniqueElements: ItemModel.mocks)), reducer: {
+    let store2 = Store(initialState: ListFeature.State(items: .init(uniqueElements: ItemModel.mocks), sharedStorage: .init(filterByFaves: false), favoriteItemsStorage: .init(faves: [])), reducer: {
         ListFeature()
     })
 
     init() {
         if !_XCTIsTesting {
             Task {
+                try? await Task.sleep(for: .seconds(1))
                 @Shared(.favoriteItemsStorage) var favoriteItemsStorage
                 
                 while (true) {
                     $favoriteItemsStorage.withLock {
                         $0.toggle(fave: ItemModel.mocks[0].id)
                     }
-                    print("toggled")
+//                    print("toggled", favoriteItemsStorage.faves)
                     try? await Task.sleep(for: .seconds(5))
                 }
             }
@@ -47,7 +48,7 @@ struct SharedStateSandboxApp: App {
                         .tabItem { Text("Tab 2") }
                     
                     NavigationStack {
-                        FavesListView(store: Store(initialState: FavesList.State(items: .init(uniqueElements: ItemModel.mocks)), reducer: {
+                        FavesListView(store: Store(initialState: FavesList.State(items: .init(uniqueElements: ItemModel.mocks), favoriteItemsStorage: .init(faves: [])), reducer: {
                             FavesList()
                         }))
                         .navigationTitle("Favorites")
