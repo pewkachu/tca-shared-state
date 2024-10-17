@@ -11,12 +11,11 @@ import Foundation
 
 @Reducer
 struct ListFeature {
-    struct State: Equatable, IOS16SharedState {
+    struct State: Equatable {
         var items: IdentifiedArrayOf<ItemModel>
         @PresentationState var child: ListFeature.State?
 
         // MARK: - Shared
-        var _sharedID: UUID
         @Shared var sharedStorage: SharedStore
         @Shared var favoriteItemsStorage: FavoritesStorage<ItemModel.ID>
 
@@ -26,8 +25,6 @@ struct ListFeature {
             self.items = items
             self.child = child
 
-            @Dependency(\.uuid) var uuid
-            self._sharedID = uuid()
             self._sharedStorage = Shared(wrappedValue: sharedStorage, .sharedStorage)
             self._favoriteItemsStorage = Shared(wrappedValue: favoriteItemsStorage, .favoriteItemsStorage)
         }
@@ -49,8 +46,6 @@ struct ListFeature {
     }
 
     var body: some ReducerOf<Self> {
-        IOS16SharedStateSyncReducer()
-
         Reduce { state, action in
             switch action {
             case .onAppear:

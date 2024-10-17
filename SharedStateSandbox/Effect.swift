@@ -8,18 +8,6 @@
 import Foundation
 import ComposableArchitecture
 
-public protocol IOS16SharedState {
-    var _sharedID: UUID { get set }
-}
-
-extension IOS16SharedState {
-    mutating func refreshShared() {
-        @Dependency(\.uuid) var uuid
-        self._sharedID = uuid()
-        print("ListFeature2.refreshShared")
-    }
-}
-
 public protocol IOS16SharedStateAction: Equatable {
     static var _sharedStateDidUpdate: Self { get }
 }
@@ -52,17 +40,4 @@ extension Effect where Action: IOS16SharedStateAction {
 //            .cancellable(id: cancellationID, cancelInFlight: true)
 //        }
 //    }
-}
-
-struct IOS16SharedStateSyncReducer<State: IOS16SharedState, Action: IOS16SharedStateAction>: Reducer {
-    @inlinable
-    public func reduce(into state: inout State, action: Action) -> Effect<Action> {
-        if #unavailable(iOS 17.0) {
-            if action == ._sharedStateDidUpdate {
-                state.refreshShared()
-            }
-        }
-
-        return .none
-    }
 }

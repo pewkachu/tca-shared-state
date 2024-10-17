@@ -10,16 +10,13 @@ import Foundation
 
 @Reducer
 struct FavesList {
-    struct State: IOS16SharedState {
+    struct State {
         var items: IdentifiedArrayOf<ItemModel>
 
-        var _sharedID: UUID
         @Shared var favoriteItemsStorage: FavoritesStorage<ItemModel.ID>
 
         init(items: IdentifiedArrayOf<ItemModel>, favoriteItemsStorage: FavoritesStorage<ItemModel.ID> = .init(faves: [])) {
             self.items = items
-            @Dependency(\.uuid) var uuid
-            self._sharedID = uuid()
             self._favoriteItemsStorage = Shared(wrappedValue: favoriteItemsStorage, .favoriteItemsStorage)
         }
     }
@@ -34,8 +31,6 @@ struct FavesList {
     }
 
     var body: some ReducerOf<Self> {
-        IOS16SharedStateSyncReducer()
-
         Reduce { state, action in
             switch action {
             case .onAppear:
