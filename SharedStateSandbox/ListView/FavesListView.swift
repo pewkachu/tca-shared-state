@@ -11,11 +11,9 @@ import SwiftUI
 struct FavesListView: View {
     struct ViewState: Equatable {
         let items: IdentifiedArrayOf<ItemModel>
-//        let sharedID: UUID
 
         init(state: FavesList.State) {
             self.items = state.items.filter { state.favoriteItemsStorage.faves.contains($0.id) }
-//            self.sharedID = state.sharedID
         }
     }
 
@@ -34,7 +32,6 @@ struct FavesListView: View {
             }
             .listStyle(.plain)
         }
-//        .id(viewStore.sharedID)
         .onAppear {
             viewStore.send(.onAppear)
         }

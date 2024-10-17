@@ -11,21 +11,14 @@ import Foundation
 
 @Reducer
 struct ListFeature {
-    struct State: Equatable {
+    struct State: Equatable, IOS16SharedState {
         var items: IdentifiedArrayOf<ItemModel>
         @PresentationState var child: ListFeature.State?
 
         // MARK: - Shared
-        var sharedID: UUID
+        var _sharedID: UUID
         @Shared var sharedStorage: SharedStore
         @Shared var favoriteItemsStorage: FavoritesStorage<ItemModel.ID>
-
-
-        mutating func refreshShared() {
-            @Dependency(\.uuid) var uuid
-            self.sharedID = uuid()
-            print("ListFeature2.refreshShared", self.sharedID)
-        }
 
         // MARK: -
 
@@ -34,14 +27,13 @@ struct ListFeature {
             self.child = child
 
             @Dependency(\.uuid) var uuid
-            self.sharedID = uuid()
-
+            self._sharedID = uuid()
             self._sharedStorage = Shared(wrappedValue: sharedStorage, .sharedStorage)
             self._favoriteItemsStorage = Shared(wrappedValue: favoriteItemsStorage, .favoriteItemsStorage)
         }
     }
 
-    enum Action: Equatable {
+    enum Action: Equatable, IOS16SharedStateAction {
         case onAppear
         case navigate
         case toggleFavorite(id: ItemModel.ID)
@@ -49,8 +41,7 @@ struct ListFeature {
         case child(PresentationAction<ListFeature.Action>)
 
         case sharedSub
-        case sharedUnsub
-        case sharedChanged
+        case _sharedStateDidUpdate
     }
 
     enum CancellationID {
@@ -58,6 +49,8 @@ struct ListFeature {
     }
 
     var body: some ReducerOf<Self> {
+        IOS16SharedStateSyncReducer()
+
         Reduce { state, action in
             switch action {
             case .onAppear:
@@ -85,18 +78,14 @@ struct ListFeature {
                 } else {
                     print("SUBSCRIBED")
                     return .merge(
-                        .syncSharedState(state.$sharedStorage, action: { Action.sharedChanged }),
-                        .syncSharedState(state.$favoriteItemsStorage, action: { Action.sharedChanged })
+                        .syncSharedState(state.$sharedStorage),
+                        .syncSharedState(state.$favoriteItemsStorage)
                     ).cancellable(id: CancellationID.sharedSub, cancelInFlight: true)
                 }
-//                return .syncSharedState((state.$sharedStorage, state.$favoriteItemsStorage), cancellationID: CancellationID.sharedSub, action: { Action.sharedChanged })
+//                return .syncSharedState((state.$sharedStorage, state.$favoriteItemsStorage), cancellationID: CancellationID.sharedSub)
 
-            case .sharedChanged:
-                state.refreshShared()
+            case ._sharedStateDidUpdate:
                 return .none
-            
-            case .sharedUnsub:
-                return .cancel(id: CancellationID.sharedSub)
             }
         }
         .ifLet(\.$child, action: \.child) {

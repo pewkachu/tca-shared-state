@@ -10,22 +10,16 @@ import Foundation
 
 @Reducer
 struct FavesList {
-    struct State {
+    struct State: IOS16SharedState {
         var items: IdentifiedArrayOf<ItemModel>
 
-        var sharedID: UUID
+        var _sharedID: UUID
         @Shared var favoriteItemsStorage: FavoritesStorage<ItemModel.ID>
-
-        mutating func sharedUpdated() {
-            @Dependency(\.uuid) var uuid
-            self.sharedID = uuid()
-            print("FavesList.sharedUpdated", self.sharedID)
-        }
 
         init(items: IdentifiedArrayOf<ItemModel>, favoriteItemsStorage: FavoritesStorage<ItemModel.ID> = .init(faves: [])) {
             self.items = items
             @Dependency(\.uuid) var uuid
-            self.sharedID = uuid()
+            self._sharedID = uuid()
             self._favoriteItemsStorage = Shared(wrappedValue: favoriteItemsStorage, .favoriteItemsStorage)
         }
     }
@@ -34,12 +28,14 @@ struct FavesList {
         case sharedSub
     }
 
-    enum Action {
+    enum Action: IOS16SharedStateAction {
         case onAppear
-        case sharedChanged
+        case _sharedStateDidUpdate
     }
 
     var body: some ReducerOf<Self> {
+        IOS16SharedStateSyncReducer()
+
         Reduce { state, action in
             switch action {
             case .onAppear:
@@ -47,13 +43,12 @@ struct FavesList {
                     return .none
                 } else {
                     print("SUBSCRIBED")
-                    return .syncSharedState(state.$favoriteItemsStorage, action: { Action.sharedChanged })
+                    return .syncSharedState(state.$favoriteItemsStorage)
                         .cancellable(id: CancelID.sharedSub, cancelInFlight: true)
                 }
-//                return .syncSharedState(state.$favoriteItemsStorage, cancellationID: CancelID.sharedSub, action: { Action.sharedChanged })
+//                return .syncSharedState(state.$favoriteItemsStorage, cancellationID: CancelID.sharedSub)
 
-            case .sharedChanged:
-                state.sharedUpdated()
+            case ._sharedStateDidUpdate:
                 return .none
             }
         }

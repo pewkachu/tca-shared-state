@@ -13,7 +13,6 @@ struct ListView: View {
         let items: IdentifiedArrayOf<ItemModel>
         let favoriteItems: Set<ItemModel.ID>
         let showFavoredOnly: Bool
-//        let sharedID: UUID
 
         init(state: ListFeature.State) {
             self.items = if state.sharedStorage.filterByFaves {
@@ -23,7 +22,6 @@ struct ListView: View {
             }
             self.favoriteItems = state.favoriteItemsStorage.faves
             self.showFavoredOnly = state.sharedStorage.filterByFaves
-//            self.sharedID = state.sharedID
         }
     }
 
@@ -54,7 +52,6 @@ struct ListView: View {
             }
             .listStyle(.plain)
         }
-//        .id(viewStore.sharedID)
         .sheet(store: store.scope(state: \.$child, action: \.child)) { store in
             ListView(store: store)
         }

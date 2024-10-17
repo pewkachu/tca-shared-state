@@ -28,7 +28,7 @@ struct SharedStateSandboxApp: App {
                     $favoriteItemsStorage.withLock {
                         $0.toggle(fave: ItemModel.mocks[0].id)
                     }
-//                    print("toggled", favoriteItemsStorage.faves)
+                    print("toggled")
                     try? await Task.sleep(for: .seconds(5))
                 }
             }
